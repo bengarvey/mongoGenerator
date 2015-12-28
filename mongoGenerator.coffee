@@ -1,4 +1,4 @@
-re "fs"
+fs = require "fs"
 
 to="mongoData.json"
 records = []
@@ -7,16 +7,21 @@ getUnixTimestamp = () ->
   range = 1449964800 - 1104537600
   return Math.round((Math.random() * range)) + 1104537600
 
-getDateString = (unixTimestamp) ->
-  date = new Date(unixTimestamp * 1000);
+getUnixTimestampMilliseconds = () ->
+  range = 1449964800000 - 1104537600000
+  return Math.round((Math.random() * range)) + 1104537600000
+
+getDateString = (unixTimestamp, convertToMs=true) ->
+  multiplier = if convertToMs then 1000 else 1
+  date = new Date(unixTimestamp * multiplier);
   return date.toISOString()
 
 for index in [0..100000]
-  stamp = getUnixTimestamp()
+  stamp = getUnixTimestampMilliseconds()
   record =
     id: index
     ts: stamp
-    modified_at: getDateString(stamp)
+    modified_at: getDateString(stamp, false)
   records.push(record)
 
 fs.writeFile(to, JSON.stringify(records), (err) ->
